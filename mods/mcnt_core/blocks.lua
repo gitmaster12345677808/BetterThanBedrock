@@ -6,16 +6,17 @@ minetest.register_node(":minecraft:stone", {
 	sounds = block_sound('stone'),
 })
 
+-- Override minecraft:grass to set a dark green base color
 minetest.register_node(":minecraft:grass", {
-	description = "Grass",
-	drop = "minecraft:dirt",
-	tiles = {
-		terrain(0),
-		terrain(2),
-		{name = terrain(3), tileable_vertical = false}
-	},
-	groups = { crumbly = 3, soil = 1, cultivatable = 1 },
-	sounds = block_sound('grass'),
+    description = "Grass",
+    drop = "minecraft:dirt",
+    tiles = {
+        {name = terrain(0), color = "#006400"}, -- Dark green top (RGB: 0, 100, 0)
+        {name = terrain(2)},                    -- Dirt bottom
+        {name = terrain(3), tileable_vertical = false} -- Dark green side
+    },
+    groups = { crumbly = 3, soil = 1, cultivatable = 1 },
+    sounds = minetest.get_modpath("default") and minetest.registered_nodes["default:dirt_with_grass"].sounds or nil,
 })
 
 minetest.register_node(":minecraft:dirt", {
@@ -40,7 +41,7 @@ minetest.register_node(":minecraft:oak", {
 minetest.register_node(":minecraft:leaves", {
 	description = "Leaves",
 	drawtype = "allfaces_optional",
-	tiles = { terrain(52) },
+	tiles = { terrain(235) },
 	paramtype = "light",
 	is_ground_content = false,
 	groups = { snappy = 1, dig_immediate = 3 },
@@ -345,12 +346,7 @@ minetest.register_node(":minecraft:stone_slab_block", {
 minetest.register_node(":minecraft:iron_block", {
 	description = "Block of Iron",
 	tiles = {
-		terrain(22),
-		terrain(54),
-		terrain(38),
-		terrain(38),
-		terrain(38),
-		terrain(38),
+		terrain(22)
 	},
 	groups = { cracky = 2, level = 1 },
 	sounds = block_sound('metal'),
@@ -377,12 +373,7 @@ minetest.register_craft({
 minetest.register_node(":minecraft:gold_block", {
 	description = "Block of Gold",
 	tiles = {
-		terrain(23),
-		terrain(55),
-		terrain(39),
-		terrain(39),
-		terrain(39),
-		terrain(39),
+		terrain(23)
 	},
 	groups = { cracky = 2, level = 1 },
 	sounds = block_sound('metal'),
@@ -406,13 +397,7 @@ minetest.register_craft({
 minetest.register_node(":minecraft:diamond_block", {
 	description = "Block of Diamond",
 	tiles = {
-		terrain(24),
-		terrain(56),
-		terrain(40),
-		terrain(40),
-		terrain(40),
-		terrain(40),
-	},
+		terrain(24)},
 	groups = {cracky=1,level=2},
 	sounds = block_sound('metal'),
 })
