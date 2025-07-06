@@ -6,7 +6,7 @@ minetest.register_on_joinplayer(function(player)
     -- Set cloud base height to 108 and ensure clouds stay within 108-112
     player:set_clouds({
         height = 108, -- Base height for clouds
-        thickness = 8, -- Thickness to span y=108 to y=112
+        thickness = 0.1, -- Thickness to span y=108 to y=112
         density = 0.4, -- Default density for natural look
         speed = {x = 5, z = 0}, -- Gentle movement like Minecraft
     })
@@ -25,8 +25,8 @@ minetest.register_globalstep(function()
         if cloud_params.height ~= 108 or cloud_params.thickness ~= 4 then
             player:set_clouds({
                 height = 108,
-                thickness = 5,
-                density = 0.3,
+                thickness = 0.1,
+                density = 0.4,
                 speed = {x = 5, z = 0},
             })
         end

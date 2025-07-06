@@ -6,16 +6,29 @@ minetest.register_node(":minecraft:stone", {
 	sounds = block_sound('stone'),
 })
 
+-- Override minecraft:grass to set a dark green base color
 minetest.register_node(":minecraft:grass", {
-	description = "Grass",
-	drop = "minecraft:dirt",
-	tiles = {
-		terrain(0),
-		terrain(2),
-		{name = terrain(3), tileable_vertical = false}
-	},
-	groups = { crumbly = 3, soil = 1, cultivatable = 1 },
-	sounds = block_sound('grass'),
+    description = "Grass",
+    drop = "minecraft:dirt",
+    tiles = {
+        {name = terrain(0), color = "#006400"}, -- Dark green top (RGB: 0, 100, 0)
+        {name = terrain(2)},                    -- Dirt bottom
+        {name = terrain(3), tileable_vertical = false} -- Dark green side
+    },
+    groups = { crumbly = 3, soil = 1, cultivatable = 1 },
+    sounds = minetest.get_modpath("default") and minetest.registered_nodes["default:dirt_with_grass"].sounds or nil,
+})
+-- Register a new grass node for the savanna biome
+minetest.register_node(":minecraft:1_grass", {
+    description = "Spruce Grass",
+    drop = "default:dirt",
+    tiles = {
+        {name = terrain(0), color = "#628B72"}, -- Savanna grass top (RGB: 171, 184, 83)
+        {name = terrain(2)},                    -- Dirt bottom
+        {name = terrain(3), tileable_vertical = false} -- Grass side
+    },
+    groups = { crumbly = 3, soil = 1, cultivatable = 1 },
+    sounds = minetest.registered_nodes["default:dirt_with_grass"] and minetest.registered_nodes["default:dirt_with_grass"].sounds or nil,
 })
 
 minetest.register_node(":minecraft:dirt", {
@@ -36,11 +49,32 @@ minetest.register_node(":minecraft:oak", {
 	groups = {choppy = 2, oddly_breakable_by_hand = 2 },
 	sounds = block_sound('wood'),
 })
-
+minetest.register_node(":minecraft:spruce", {
+	description = "Wood",
+	tiles = {
+		terrain(21),
+		terrain(21),
+		terrain(116)
+	},
+	is_ground_content = false,
+	groups = {choppy = 2, oddly_breakable_by_hand = 2 },
+	sounds = block_sound('wood'),
+})
+minetest.register_node(":minecraft:birch", {
+	description = "Wood",
+	tiles = {
+		terrain(21),
+		terrain(21),
+		terrain(117)
+	},
+	is_ground_content = false,
+	groups = {choppy = 2, oddly_breakable_by_hand = 2 },
+	sounds = block_sound('wood'),
+})
 minetest.register_node(":minecraft:leaves", {
 	description = "Leaves",
 	drawtype = "allfaces_optional",
-	tiles = { terrain(52) },
+	tiles = { terrain(235) },
 	paramtype = "light",
 	is_ground_content = false,
 	groups = { snappy = 1, dig_immediate = 3 },
@@ -56,7 +90,25 @@ minetest.register_node(":minecraft:leaves", {
 	},
 	sounds = block_sound('grass'),
 })
-
+minetest.register_node(":spruce_tree:spruce_leaves", {
+	description = "Spruce Leaves",
+	drawtype = "allfaces_optional",
+	tiles = { terrain(219) },
+	paramtype = "light",
+	is_ground_content = false,
+	groups = { snappy = 1, dig_immediate = 3 },
+	waving = 2,
+	drop = {
+		max_items = 1,
+		items = {
+			{
+				items = {"spruce:sapling"},
+				rarity = 10, -- a1.0.0 has 1/10 chance of leaves dropping sapling
+			},
+		}
+	},
+	sounds = block_sound('grass'),
+})
 minetest.register_node(":minecraft:plank", {
 	description = "Wooden Planks",
 	tiles = { terrain(4) },
@@ -345,12 +397,7 @@ minetest.register_node(":minecraft:stone_slab_block", {
 minetest.register_node(":minecraft:iron_block", {
 	description = "Block of Iron",
 	tiles = {
-		terrain(22),
-		terrain(54),
-		terrain(38),
-		terrain(38),
-		terrain(38),
-		terrain(38),
+		terrain(22)
 	},
 	groups = { cracky = 2, level = 1 },
 	sounds = block_sound('metal'),
@@ -377,12 +424,7 @@ minetest.register_craft({
 minetest.register_node(":minecraft:gold_block", {
 	description = "Block of Gold",
 	tiles = {
-		terrain(23),
-		terrain(55),
-		terrain(39),
-		terrain(39),
-		terrain(39),
-		terrain(39),
+		terrain(23)
 	},
 	groups = { cracky = 2, level = 1 },
 	sounds = block_sound('metal'),
@@ -406,13 +448,7 @@ minetest.register_craft({
 minetest.register_node(":minecraft:diamond_block", {
 	description = "Block of Diamond",
 	tiles = {
-		terrain(24),
-		terrain(56),
-		terrain(40),
-		terrain(40),
-		terrain(40),
-		terrain(40),
-	},
+		terrain(24)},
 	groups = {cracky=1,level=2},
 	sounds = block_sound('metal'),
 })

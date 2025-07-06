@@ -10,6 +10,19 @@ minetest.register_craft({
 		{"minecraft:oak"}
 	}
 })
+minetest.register_craft({
+	output = "minecraft:plank 4",
+	recipe = {
+		{"minecraft:spruce"}
+	}
+})
+minetest.register_craft({
+	output = "minecraft:plank 4",
+	recipe = {
+		{"minecraft:birch"}
+	}
+})
+
 
 minetest.register_craft({
 	output = "minecraft:crafting_table",

@@ -15,7 +15,7 @@ local glass_sounds = {
 local glass_sound_index = 1
 
 -- Register Glowstone Node
-minetest.register_node("glowstone:glowstone", {
+minetest.register_node(":minecraft:glowstone", {
 	description = "Glowstone",
 	tiles = {"glowstone.png"},
 	is_ground_content = false,

@@ -121,11 +121,11 @@ end)
 
 minetest.register_on_joinplayer(function(player)
 	--init inventory
-	player:get_inventory():set_width("main", 9)
+	player:get_inventory():set_width("main", 7)
 	player:get_inventory():set_size("main", 36)
 
 	--set hotbar size
-	player:hud_set_hotbar_itemcount(9)
+	player:hud_set_hotbar_itemcount(7)
 	--add hotbar images
 	player:hud_set_hotbar_image("mcla_inventory_hotbar.png")
 	player:hud_set_hotbar_selected_image("mcla_inventory_hotbar_selected.png")
