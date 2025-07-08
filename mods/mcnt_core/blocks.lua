@@ -507,6 +507,9 @@ minetest.register_node(":minecraft:obsidian", {
 	tiles = { terrain(37) },
 	groups = { cracky = 1, level = 3 },
 	sounds = block_sound('stone'),
+	on_blast = function(pos, intensity)
+        -- Do nothing, making the block immune to TNT
+    end,
 })
 
 minetest.register_node(":minecraft:glowing_obsidian", {
@@ -515,6 +518,9 @@ minetest.register_node(":minecraft:glowing_obsidian", {
 	tiles = { terrain(191) },
 	groups = { cracky = 1, level = 3 },
 	sounds = block_sound('stone'),
+	on_blast = function(pos, intensity)
+        -- Do nothing, making the block immune to TNT
+    end,
 })
 
 minetest.register_node(":minecraft:tnt", {
