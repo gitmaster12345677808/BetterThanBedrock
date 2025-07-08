@@ -509,6 +509,14 @@ minetest.register_node(":minecraft:obsidian", {
 	sounds = block_sound('stone'),
 })
 
+minetest.register_node(":minecraft:glowing_obsidian", {
+	description = "Glowing Obsidian",
+	light_source = 12,
+	tiles = { terrain(191) },
+	groups = { cracky = 1, level = 3 },
+	sounds = block_sound('stone'),
+})
+
 minetest.register_node(":minecraft:tnt", {
 	description = "TNT",
 	tiles = {
