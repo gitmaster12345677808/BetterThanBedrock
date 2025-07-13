@@ -1,5 +1,5 @@
 -- Minetest mod: custom_chat
--- Displays player, server, and error messages on the middle-left of the screen like Minecraft
+-- Displays player and server chat messages (excluding errors) on the middle-left of the screen like Minecraft
 
 local modname = minetest.get_current_modname()
 local modpath = minetest.get_modpath(modname)
@@ -47,7 +47,7 @@ end
 local function update_hud(player_name)
     local player = minetest.get_player_by_name(player_name)
     if not player then
-        minetest.log("error", "[" .. modname .. "] Player " .. player_name .. " not found for HUD update")
+        minetest.log("warning", "[" .. modname .. "] Skipping HUD update for disconnected player " .. player_name)
         return
     end
 
@@ -58,7 +58,7 @@ local function update_hud(player_name)
 
     -- Remove old HUD elements
     for _, hud_id in ipairs(player_huds[player_name]) do
-        player:hud_remove(hud_id)
+        pcall(function() player:hud_remove(hud_id) end) -- Use pcall to handle potential errors
     end
     player_huds[player_name] = {}
 
@@ -77,21 +77,27 @@ local function update_hud(player_name)
         end
 
         if alpha > 0 then
-            local hud_id = player:hud_add({
-                hud_elem_type = "text",
-                position = hud_position,
-                offset = {x = 0, y = (i - #messages) * hud_offset_y},
-                text = msg.text,
-                alignment = {x = 1, y = 1}, -- Left-aligned
-                scale = {x = 100, y = 100},
-                number = 0xFFFFFF, -- White text
-                style = 0, -- Default font style
-                z_index = 1000, -- High z_index to appear above hotbar
-                size = {x = 1, y = 1}, -- Font size 25
-                color = {r = 255, g = 255, b = 255, a = alpha}
-            })
-            table.insert(player_huds[player_name], hud_id)
-            minetest.log("action", "[" .. modname .. "] HUD added for " .. player_name .. ": " .. msg.text .. " at x=" .. hud_position.x .. ", y=" .. (hud_position.y + (i - #messages) * hud_offset_y / 1000) .. ", size=" .. font_size)
+            local success, hud_id = pcall(function()
+                return player:hud_add({
+                    hud_elem_type = "text",
+                    position = hud_position,
+                    offset = {x = 0, y = (i - #messages) * hud_offset_y},
+                    text = msg.text,
+                    alignment = {x = 1, y = 1}, -- Left-aligned
+                    scale = {x = 100, y = 100},
+                    number = 0xFFFFFF, -- White text
+                    style = 0, -- Default font style
+                    z_index = 1000, -- High z_index to appear above hotbar
+                    size = {x = 1, y = 1}, -- Font size 25
+                    color = {r = 255, g = 255, b = 255, a = alpha}
+                })
+            end)
+            if success then
+                table.insert(player_huds[player_name], hud_id)
+                minetest.log("action", "[" .. modname .. "] HUD added for " .. player_name .. ": " .. msg.text .. " at x=" .. hud_position.x .. ", y=" .. (hud_position.y + (i - #messages) * hud_offset_y / 1000) .. ", size=" .. font_size)
+            else
+                minetest.log("error", "[" .. modname .. "] Failed to add HUD for " .. player_name .. ": " .. tostring(hud_id))
+            end
         end
     end
 
@@ -99,20 +105,6 @@ local function update_hud(player_name)
     while #messages > 0 and (current_time - messages[1].time) > message_lifetime do
         table.remove(messages, 1)
     end
-end
-
--- Override minetest.log to capture server error messages
-local old_minetest_log = minetest.log
-minetest.log = function(level, message)
-    if level == "error" then
-        minetest.log("action", "[" .. modname .. "] Captured error message: " .. message)
-        for _, player in ipairs(minetest.get_connected_players()) do
-            local player_name = player:get_player_name()
-            add_chat_message(player_name, "[Server Error] " .. message)
-            update_hud(player_name)
-        end
-    end
-    old_minetest_log(level, message)
 end
 
 -- Override minetest.chat_send_all to capture server messages
@@ -152,7 +144,12 @@ end)
 
 -- Periodic update to handle fading
 minetest.register_globalstep(function(dtime)
+    -- Create a copy of player names to avoid modification during iteration
+    local players = {}
     for player_name in pairs(chat_messages) do
+        table.insert(players, player_name)
+    end
+    for _, player_name in ipairs(players) do
         update_hud(player_name)
     end
 end)
@@ -160,7 +157,12 @@ end)
 -- Clean up when a player leaves
 minetest.register_on_leaveplayer(function(player)
     local player_name = player:get_player_name()
-    player_huds[player_name] = nil
+    if player_huds[player_name] then
+        for _, hud_id in ipairs(player_huds[player_name]) do
+            pcall(function() player:hud_remove(hud_id) end) -- Safely remove HUD elements
+        end
+        player_huds[player_name] = nil
+    end
     chat_messages[player_name] = nil
     minetest.log("action", "[" .. modname .. "] Cleaned up data for " .. player_name .. "\"")
 end)
